@@ -1,6 +1,4 @@
-/**
- *Submitted for verification at Etherscan.io on 2018-05-29
-*/
+// SPDX-License-Identifier: UNLICENSED
 
 /**
  * Animal Factory
@@ -11,7 +9,7 @@
  * Mujtaba Idrees: https://www.linkedin.com/in/mujtabaidrees94/
  **/
  
-pragma solidity ^0.4.23;
+pragma solidity ^0.6.0;
 
  
 library SafeMath {
@@ -41,7 +39,7 @@ library SafeMath {
 }
 
 contract Ownable {
-  address public owner;
+  address payable owner;
 
 
   event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
@@ -51,7 +49,7 @@ contract Ownable {
    * @dev The Ownable constructor sets the original `owner` of the contract to the sender
    * account.
    */
-  function Ownable() public {
+  constructor() public {
     owner = msg.sender;
   }
 
@@ -69,7 +67,7 @@ contract Ownable {
    * @dev Allows the current owner to transfer control of the contract to a newOwner.
    * @param newOwner The address to transfer ownership to.
    */
-  function transferOwnership(address newOwner) onlyOwner public {
+  function transferOwnership(address payable newOwner) onlyOwner public {
     require(newOwner != address(0));
     emit OwnershipTransferred(owner, newOwner);
     owner = newOwner;
@@ -78,16 +76,169 @@ contract Ownable {
 }
 
 // The ERC-721 Interface to reference the animal factory token
-interface ERC721Interface {
-     function totalSupply() public view returns (uint256);
-     function safeTransferFrom(address _from, address _to, uint256 _tokenId);
-     function burnToken(address tokenOwner, uint256 tid) ;
-     function sendToken(address sendTo, uint tid, string tmeta) ;
-     function getTotalTokensAgainstAddress(address ownerAddress) public constant returns (uint totalAnimals);
-     function getAnimalIdAgainstAddress(address ownerAddress) public constant returns (uint[] listAnimals);
-     function balanceOf(address _owner) public view returns (uint256 _balance);
-     function ownerOf(uint256 _tokenId) public view returns (address _owner);
-     function setAnimalMeta(uint tid, string tmeta);
+// interface ERC721Interface {
+//      function totalSupply() public view returns (uint256);
+//      function safeTransferFrom(address _from, address _to, uint256 _tokenId);
+//      function burnToken(address tokenOwner, uint256 tid) ;
+//      function sendToken(address sendTo, uint tid, string tmeta) ;
+//      function getTotalTokensAgainstAddress(address ownerAddress) public returns (uint totalAnimals);
+//      function getAnimalIdAgainstAddress(address ownerAddress) public returns (uint[] listAnimals);
+//      function balanceOf(address _owner) public view returns (uint256 _balance);
+//      function ownerOf(uint256 _tokenId) public view returns (address _owner);
+//      function setAnimalMeta(uint tid, string tmeta);
+// }
+// interface IERC165 {
+//     /**
+//      * @dev Returns true if this contract implements the interface defined by
+//      * `interfaceId`. See the corresponding
+//      * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]
+//      * to learn more about how these ids are created.
+//      *
+//      * This function call must use less than 30 000 gas.
+//      */
+//     function supportsInterface(bytes4 interfaceId) external view returns (bool);
+// is IERC165 }
+
+// interface IERC721  {
+//     /**
+//      * @dev Emitted when `tokenId` token is transferred from `from` to `to`.
+//      */
+//     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
+
+//     /**
+//      * @dev Emitted when `owner` enables `approved` to manage the `tokenId` token.
+//      */
+//     event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
+
+//     /**
+//      * @dev Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.
+//      */
+//     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
+
+//     /**
+//      * @dev Returns the number of tokens in ``owner``'s account.
+//      */
+//   // function balanceOf(address owner) external view returns (uint256 balance);
+
+//     /**
+//      * @dev Returns the owner of the `tokenId` token.
+//      *
+//      * Requirements:
+//      *
+//      * - `tokenId` must exist.
+//      */
+//     //function ownerOf(uint256 tokenId) external view returns (address owner);
+
+//     /**
+//      * @dev Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients
+//      * are aware of the ERC721 protocol to prevent tokens from being forever locked.
+//      *
+//      * Requirements:
+//      *
+//      * - `from` cannot be the zero address.
+//      * - `to` cannot be the zero address.
+//      * - `tokenId` token must exist and be owned by `from`.
+//      * - If the caller is not `from`, it must be have been allowed to move this token by either {approve} or {setApprovalForAll}.
+//      * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.
+//      *
+//      * Emits a {Transfer} event.
+//      */
+//     //function safeTransferFrom(address from, address to, uint256 tokenId) external;
+
+//     /**
+//      * @dev Transfers `tokenId` token from `from` to `to`.
+//      *
+//      * WARNING: Usage of this method is discouraged, use {safeTransferFrom} whenever possible.
+//      *
+//      * Requirements:
+//      *
+//      * - `from` cannot be the zero address.
+//      * - `to` cannot be the zero address.
+//      * - `tokenId` token must be owned by `from`.
+//      * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.
+//      *
+//      * Emits a {Transfer} event.
+//      */
+//     function transferFrom(address from, address to, uint256 tokenId) external;
+
+//     /**
+//      * @dev Gives permission to `to` to transfer `tokenId` token to another account.
+//      * The approval is cleared when the token is transferred.
+//      *
+//      * Only a single account can be approved at a time, so approving the zero address clears previous approvals.
+//      *
+//      * Requirements:
+//      *
+//      * - The caller must own the token or be an approved operator.
+//      * - `tokenId` must exist.
+//      *
+//      * Emits an {Approval} event.
+//      */
+//     function approve(address to, uint256 tokenId) external;
+
+//     /**
+//      * @dev Returns the account approved for `tokenId` token.
+//      *
+//      * Requirements:
+//      *
+//      * - `tokenId` must exist.
+//      */
+//     function getApproved(uint256 tokenId) external view returns (address operator);
+
+//     /**
+//      * @dev Approve or remove `operator` as an operator for the caller.
+//      * Operators can call {transferFrom} or {safeTransferFrom} for any token owned by the caller.
+//      *
+//      * Requirements:
+//      *
+//      * - The `operator` cannot be the caller.
+//      *
+//      * Emits an {ApprovalForAll} event.
+//      */
+//     function setApprovalForAll(address operator, bool _approved) external;
+
+//     /**
+//      * @dev Returns if the `operator` is allowed to manage all of the assets of `owner`.
+//      *
+//      * See {setApprovalForAll}
+//      */
+//     function isApprovedForAll(address owner, address operator) external view returns (bool);
+
+//     /**
+//       * @dev Safely transfers `tokenId` token from `from` to `to`.
+//       *
+//       * Requirements:
+//       *
+//      * - `from` cannot be the zero address.
+//      * - `to` cannot be the zero address.
+//       * - `tokenId` token must exist and be owned by `from`.
+//       * - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}.
+//       * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.
+//       *
+//       * Emits a {Transfer} event.
+//       */
+//      function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) external;
+     
+//      function totalSupply() public view returns (uint256) ;
+//      function safeTransferFrom(address _from, address _to, uint256 _tokenId)public ;
+//      function burnToken(address tokenOwner, uint256 tid) public ;
+//      function sendToken(address sendTo, uint tid, string memory tmeta) public;
+//      function getTotalTokensAgainstAddress(address ownerAddress)public returns (uint totalAnimals);
+//      function getAnimalIdAgainstAddress(address ownerAddress) public returns (uint[] memory listAnimals);
+//      function balanceOf(address _owner) public view returns (uint256 _balance);
+//      function ownerOf(uint256 _tokenId) public view returns (address _owner);
+//      function setAnimalMeta(uint tid, string memory tmeta) public;
+// }
+     interface ERC721Interface {
+     function totalSupply() external view returns (uint256);
+     function safeTransferFrom(address _from, address _to, uint256 _tokenId)external ;
+     function burnToken(address tokenOwner, uint256 tid)external ;
+     function sendToken(address sendTo, uint tid, string calldata tmeta) external;
+     function getTotalTokensAgainstAddress(address ownerAddress) external returns (uint totalAnimals);
+     function getAnimalIdAgainstAddress(address ownerAddress) external returns (uint[] memory listAnimals);
+     function balanceOf(address _owner) external view returns (uint256 _balance);
+     function ownerOf(uint256 _tokenId) external view returns (address payable _owner);
+     function setAnimalMeta(uint tid, string calldata tmeta)external;
 }
 
 
@@ -154,20 +305,18 @@ contract AnimalFactory is Ownable
 
 	///ether means bnb here
     //rate of each animal
-    // uint256 public weiPerAnimal = 0.25 ether;
-    
-    uint256 public weiPerAnimal = 250000000000000000 wei;
-    //uint public priceForBuyingAssets = 0.25 ether;
-    uint public priceForBuyingAssets = 250000000000000000 wei;
+    uint256 public weiPerAnimal = 0.25 ether;
+    uint public priceForBuyingAssets = 0.25 ether;
 	
 	//the fees for advertising an animal for sale and mate
-    // uint public priceForMateAdvertisement = 0.025 ether;
-    uint public priceForMateAdvertisement = 250000000000000000 wei;
-    //uint public priceForSaleAdvertisement = 0.025 ether;
-	uint public priceForSaleAdvertisement = 25000000000000000 wei;
+    uint public priceForMateAdvertisement = 0.025 ether;
+    uint public priceForSaleAdvertisement = 0.025 ether;
+	uint public priceForSuccessfulSale = 0.05 ether;
 	
-	// uint public priceForSuccessfulSale = 0.05 ether;
-    uint public priceForSuccessfulSale = 500000000000000000 wei;
+	//The owner percentages from mating and selling transactions
+    uint public ownerPerThousandShareForMating = 2;
+    uint public ownerPerThousandShareForBuying = 5;
+
     // amount of raised money in wei
     uint256 public weiRaised;
 
@@ -192,18 +341,15 @@ contract AnimalFactory is Ownable
     event AnimalsPurchased(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
   
-   constructor(address _walletOwner,address _tokenAddress) public 
+   constructor(address payable _walletOwner,address _tokenAddress) public 
    { 
-        require(_walletOwner != 0x0);
+        require(_walletOwner != address(0x0));
         owner = _walletOwner;
         isContractPaused = false;
 		isMatingPaused = true;
-       // priceForMateAdvertisement = 0.025 ether;
-        priceForMateAdvertisement =  25000000000000000 wei;
-       // priceForSaleAdvertisement = 0.025 ether;
-         priceForSaleAdvertisement = 25000000000000000 wei;
-       // priceForBuyingAssets = 0.25 ether;
-        priceForBuyingAssets = 25000000000000000 wei;
+        priceForMateAdvertisement = 0.025 ether;
+        priceForSaleAdvertisement = 0.025 ether;
+        priceForBuyingAssets = 0.25 ether;
         token = ERC721Interface(_tokenAddress);
     }
 
@@ -211,12 +357,8 @@ contract AnimalFactory is Ownable
      * function to get animal details by id
      **/ 
     
-    function setOwner(address _new) public onlyOwner(){
-        owner = _new;
-    }
-    
-    function getAnimalById(uint aid) public constant returns 
-    (string, string,uint,uint ,uint, uint,uint)
+    function getAnimalById(uint aid) public view returns 
+    (string memory , string memory,uint,uint ,uint, uint,uint)
     {
         if(animalAgainstId[aid].eggPhase==true)
         {
@@ -241,7 +383,7 @@ contract AnimalFactory is Ownable
             );
         }
     }
-    function getAnimalByIdVisibility(uint aid) public constant 
+    function getAnimalByIdVisibility(uint aid) public view
     returns (bool upforsale,bool upformating,bool eggphase,bool isbornbymating, 
     uint birthdate, uint Assetsid, uint generationid )
     {
@@ -256,7 +398,7 @@ contract AnimalFactory is Ownable
             );
     }
     
-     function getOwnerByAnimalId(uint aid) public constant 
+     function getOwnerByAnimalId(uint aid) public view 
     returns (address)
     {
         return token.ownerOf(aid);
@@ -266,7 +408,7 @@ contract AnimalFactory is Ownable
     /**
      * function to get all animals against an address
      **/ 
-    function getAllAnimalsByAddress(address ad) public constant returns (uint[] listAnimals)
+    function getAllAnimalsByAddress(address ad) public returns (uint[] memory listAnimals)
     {
         require (!isContractPaused);
         return token.getAnimalIdAgainstAddress(ad);
@@ -277,11 +419,11 @@ contract AnimalFactory is Ownable
     /**
      * Function to buy animals from the factory in exchange for ethers
      **/ 
-    function MintAnimalsFromAnimalFactory(string animalName, string animalDesc) public payable 
+    function MintAnimalsFromAnimalFactory(string memory animalName, string memory animalDesc) public payable 
     {
         require (!isContractPaused);
         require(validPurchase());
-        require(msg.sender != 0x0);
+        require(msg.sender != address(0x0));
 		
 		//everyone except owner has to pay the advertisement fees
         if (msg.sender!=owner)
@@ -347,26 +489,30 @@ contract AnimalFactory is Ownable
     /** 
      * Buying animals from a user 
      **/ 
-    function buyAnimalsFromUser(uint animalId)  public payable
+    function buyAnimalsFromUser(uint animalId) public payable 
     {
         require (!isContractPaused);
-        require(msg.sender != 0x0);	
-				
-        address prevOwner=token.ownerOf(animalId);  
-
-		//checking that a user is not trying to buy an animal from himself
+        require(msg.sender !=address(0x0));
+        address payable prevOwner=token.ownerOf(animalId);
+        
+        //checking that a user is not trying to buy an animal from himself
         require(prevOwner!=msg.sender);
-		
-		//check if the animal for sale
-		require(animalAgainstId[animalId].upForSale);
         
         //the price of sale
         uint price=animalAgainstId[animalId].priceForSale;
+
+        //the percentage of owner         
+        uint OwnerPercentage=animalAgainstId[animalId].priceForSale.mul(ownerPerThousandShareForBuying);
+        OwnerPercentage=OwnerPercentage.div(1000);
+		//Take Owner percentage from sale
+        uint priceWithOwnerPercentage = animalAgainstId[animalId].priceForSale.sub(OwnerPercentage);
+		 
         
         //funds sent should be enough to cover the selling price plus the owner fees
-        require(msg.value>=price); 	
-		
-		// transfer token only
+        require(msg.value>=priceWithOwnerPercentage); 
+
+        // transfer token only
+       // token.mint(prevOwner,msg.sender,1); 
 		// transfer token here
         token.safeTransferFrom(prevOwner,msg.sender,animalId);
 
@@ -379,26 +525,30 @@ contract AnimalFactory is Ownable
         {
           if (upForSaleList[j] == animalId)
             delete upForSaleList[j];
-        }    		
-       
-	
+        }      
+        
         //transfer of money from buyer to beneficiary
-        prevOwner.transfer(msg.value);
+        prevOwner.transfer(price);
         
+        //transfer of percentage money to ownerWallet
+        owner.transfer(OwnerPercentage);
         
-       
+        // return extra funds if sent by mistake
+        if(msg.value>priceWithOwnerPercentage)
+        {
+            msg.sender.transfer(msg.value.sub(priceWithOwnerPercentage));
+        }
     }
   
     /**
      * function to accept a mate offer by offering one of your own animals 
      * and paying ethers ofcourse
      **/ 
-    function mateAnimal(uint parent1Id, uint parent2Id, string animalName,string animalDesc)  public payable
+    function mateAnimal(uint parent1Id, uint parent2Id, string memory animalName,string memory animalDesc) public payable 
     {
-		require (!isMatingPaused);
         require (!isContractPaused);
-        require(msg.sender != 0x0);		
-		
+		require(!isMatingPaused);
+        require(msg.sender != address(0x0));
         
         //the requester is actually the owner of the animal which he or she is offering for mating
         require (token.ownerOf(parent2Id) == msg.sender);
@@ -410,12 +560,16 @@ contract AnimalFactory is Ownable
         require(animalAgainstId[parent1Id].upForMating==true);
 
         // the price requested for mating
-        uint price=animalAgainstId[parent1Id].priceForMating;        
-       
-
+        uint price=animalAgainstId[parent1Id].priceForMating;
+        
+        // the owner fees 
+        uint OwnerPercentage=animalAgainstId[parent1Id].priceForMating.mul(ownerPerThousandShareForMating);
+        OwnerPercentage=OwnerPercentage.div(1000);
+        
+        uint priceWithOwnerPercentage = animalAgainstId[parent1Id].priceForMating.sub(OwnerPercentage);
+        
         // the ethers sent should be enough to cover the mating price and the owner fees
-        require(msg.value>=price);
-		
+        require(msg.value>=priceWithOwnerPercentage);
         uint generationnum = 1;
 
         if(animalAgainstId[parent1Id].generationId >= animalAgainstId[parent2Id].generationId)
@@ -469,9 +623,16 @@ contract AnimalFactory is Ownable
         animalAgainstId[parent1Id].priceForMating = 0;
         
         //transfer of money from beneficiary to mate owner
-        token.ownerOf(parent1Id).transfer(msg.value);
+        token.ownerOf(parent1Id).transfer(price);
         
-
+        //transfer of percentage money to ownerWallet
+        owner.transfer(OwnerPercentage);
+        
+        // return extra funds if sent by mistake
+        if(msg.value>priceWithOwnerPercentage)
+        {
+            msg.sender.transfer(msg.value.sub(priceWithOwnerPercentage));
+        }
         
     }
 
@@ -483,7 +644,7 @@ contract AnimalFactory is Ownable
     function TransferAnimalToAnotherUser(uint animalId,address to) public 
     {
         require (!isContractPaused);
-        require(msg.sender != 0x0);
+        require(msg.sender != address(0x0));
         
         //the requester of the transfer is actually the owner of the animal id provided
         require(token.ownerOf(animalId)==msg.sender);
@@ -604,7 +765,7 @@ contract AnimalFactory is Ownable
     }
   
     // @return true if the transaction can buy tokens
-    function validPurchase() internal constant returns (bool) 
+    function validPurchase() internal returns (bool) 
     {
         // check validity of purchase
         if(msg.value.div(weiPerAnimal)<1)
@@ -679,7 +840,7 @@ contract AnimalFactory is Ownable
      /**
      * function to get all mating animal ids
      **/ 
-    function getAllMatingAnimals() public constant returns (uint[]) 
+    function getAllMatingAnimals() public view returns (uint[] memory) 
     {
         return upForMatingList;
     }
@@ -687,7 +848,7 @@ contract AnimalFactory is Ownable
      /**
      * function to get all sale animals ids
      **/ 
-    function getAllSaleAnimals() public constant returns (uint[]) 
+    function getAllSaleAnimals() public view returns (uint[] memory) 
     {
         return upForSaleList;
     }
@@ -746,7 +907,7 @@ contract AnimalFactory is Ownable
     /**
      * function to get all children ids of an animal
      **/  
-    function getChildrenAgainstAnimalId(uint id) public constant returns (uint[]) 
+    function getChildrenAgainstAnimalId(uint id) public view returns (uint[] memory) 
     {
         return childrenIdAgainstAnimalId[id];
     }
@@ -754,7 +915,7 @@ contract AnimalFactory is Ownable
     /**
      * function to get all animals in the egg phase list
      **/  
-    function getEggPhaseList() public constant returns (uint[]) 
+    function getEggPhaseList() public view returns (uint[] memory) 
     {
         return eggPhaseAnimalIds;
     }
@@ -763,7 +924,7 @@ contract AnimalFactory is Ownable
      /**
      * function to get all animals in Assets not yet approved list
      **/  
-    function getAnimalIdsWithPendingAssets() public constant returns (uint[]) 
+    function getAnimalIdsWithPendingAssets() public view returns (uint[] memory) 
     {
         return animalIdsWithPendingAssetss;
     }
@@ -817,7 +978,7 @@ contract AnimalFactory is Ownable
     /**
      * function to return the members that could remove an animal from egg phase
      **/  
-    function listMembers() public constant returns (address[]) 
+    function listMembers() public view returns (address[] memory) 
     { 
         return memberAddresses;
     }
@@ -840,7 +1001,7 @@ contract AnimalFactory is Ownable
      * function to update an animal
      * can only be called from owner wallet
      **/  
-    function updateAnimal(uint animalId, string name, string desc) public  
+    function updateAnimal(uint animalId, string memory name, string memory desc) public  
     { 
         require(msg.sender==token.ownerOf(animalId));
         animalAgainstId[animalId].name=name;
